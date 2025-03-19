@@ -1,22 +1,30 @@
+import 'package:finance_tracker/services/auth/firebase_auth_service.dart';
+import 'package:finance_tracker/utils/commons.dart';
+import 'package:finance_tracker/utils/utils.dart';
+import 'package:finance_tracker/view/auth/login_screen.dart';
 import 'package:finance_tracker/view/components/auth_bottom_text.dart';
 import 'package:finance_tracker/view/components/auth_button.dart';
 import 'package:finance_tracker/view/components/auth_text_field.dart';
+import 'package:finance_tracker/view_model/auth_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final authProviderObj = ref.watch(authProvider);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -50,11 +58,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
             AuthButton(
               backgroundColor: Colors.purple,
               buttonText: "Sign Up",
-              onTap: () {},
+              onTap: () {
+                ref
+                    .read(authProvider.notifier)
+                    .signUpUser(
+                      email: _emailController.text.trim(),
+                      password: _passwordController.text.trim(),
+                    );
+                if (authProviderObj.isLoading) {
+                  showProgressDialog(context);
+                  printInDebug("Loading Auth");
+                } else if (authProviderObj.isError) {
+                  showSnackBar(context, message: authProviderObj.errorMessage!);
+                  printInDebug(authProviderObj.errorMessage!);
+                }
+              },
             ),
             SizedBox(height: 8),
             AuthBottomText(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  pageRouteAnimation(context, screen: LoginScreen(), x: -1),
+                );
+              },
               question: "Already have an account? ",
               solution: "Login Now",
             ),

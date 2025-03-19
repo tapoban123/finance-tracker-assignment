@@ -1,5 +1,21 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+class _ObsecureTextValues {
+  final bool obsecureValue;
+  final bool showIcon;
+
+  const _ObsecureTextValues({
+    required this.obsecureValue,
+    required this.showIcon,
+  });
+
+  _ObsecureTextValues copyWith({bool? obsecureValue, bool? showIcon}) {
+    return _ObsecureTextValues(
+      obsecureValue: obsecureValue ?? this.obsecureValue,
+      showIcon: showIcon ?? this.showIcon,
+    );
+  }
+}
 
 class AuthTextField extends StatefulWidget {
   final TextEditingController textController;
@@ -19,11 +35,13 @@ class AuthTextField extends StatefulWidget {
 }
 
 class _AuthTextFieldState extends State<AuthTextField> {
-  late ValueNotifier<bool> obsecureText;
+  late ValueNotifier<_ObsecureTextValues> obsecureText;
 
   @override
   void initState() {
-    obsecureText = ValueNotifier(true);
+    obsecureText = ValueNotifier(
+      _ObsecureTextValues(obsecureValue: true, showIcon: false),
+    );
 
     super.initState();
   }
@@ -49,13 +67,19 @@ class _AuthTextFieldState extends State<AuthTextField> {
                   widget.isPassword && widget.textController.text.isNotEmpty
                       ? GestureDetector(
                         onTap: () {
-                          obsecureText.value = !obsecureText.value;
+                          obsecureText.value = obsecureValue.copyWith(
+                            obsecureValue: !obsecureText.value.obsecureValue,
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(right: 10.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Text(obsecureValue ? "Show" : "Hide")],
+                            children: [
+                              Text(
+                                obsecureValue.obsecureValue ? "Show" : "Hide",
+                              ),
+                            ],
                           ),
                         ),
                       )
@@ -65,8 +89,21 @@ class _AuthTextFieldState extends State<AuthTextField> {
               hintText: widget.hintText,
               filled: true,
             ),
+            onChanged: (value) {
+              final bool showIcon;
+
+              if (value.isNotEmpty) {
+                showIcon = true;
+              } else {
+                showIcon = false;
+              }
+              obsecureText.value = obsecureText.value.copyWith(
+                showIcon: showIcon,
+              );
+            },
             keyboardType: widget.keyboardType,
-            obscureText: widget.isPassword ? obsecureText.value : false,
+            obscureText:
+                widget.isPassword ? obsecureText.value.obsecureValue : false,
           ),
     );
   }
