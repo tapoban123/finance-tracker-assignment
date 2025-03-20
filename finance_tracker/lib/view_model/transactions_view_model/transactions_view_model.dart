@@ -4,6 +4,12 @@ import 'package:finance_tracker/services/firebase_storage_service/enums.dart';
 import 'package:finance_tracker/services/firebase_storage_service/manage_transactions_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+StateNotifierProvider<TransactionsViewModel, TransactionsProviderModel>
+transactionsProvider = StateNotifierProvider(
+  (ref) =>
+      TransactionsViewModel(transactionsService: ManageTransactionsService()),
+);
+
 class TransactionsViewModel extends StateNotifier<TransactionsProviderModel> {
   final ManageTransactionsService _transactionsService;
 
