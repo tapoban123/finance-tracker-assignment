@@ -1,7 +1,9 @@
-import 'package:finance_tracker/model/auth_provider_model.dart';
+import 'package:finance_tracker/model/provider_models/auth_provider_model.dart';
 import 'package:finance_tracker/services/auth/firebase_auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+
 
 StateNotifierProvider<AuthViewModel, AuthProviderModel> authProvider =
     StateNotifierProvider(

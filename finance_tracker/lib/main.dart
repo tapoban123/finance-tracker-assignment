@@ -1,7 +1,8 @@
 import 'package:finance_tracker/firebase_options.dart';
+import 'package:finance_tracker/view/auth/auth_screen.dart';
 import 'package:finance_tracker/view/auth/login_screen.dart';
 import 'package:finance_tracker/view/home/home_screen.dart';
-import 'package:finance_tracker/view_model/auth_view_model.dart';
+import 'package:finance_tracker/view_model/auth_view_model/auth_view_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,10 +28,8 @@ class MyApp extends ConsumerWidget {
           title: "Finance Tracker",
           debugShowCheckedModeBanner: false,
           theme: ThemeData.light(useMaterial3: true),
-          home: snapshot.data == null ? const LoginScreen() : HomeScreen(),
+          home: snapshot.data == null ? const AuthScreen() : HomeScreen(),
         );
-
-        // return Scaffold(body: Center(child: Text("Error")));
       },
     );
   }
