@@ -24,7 +24,7 @@ class TransactionsViewModel extends StateNotifier<TransactionsProviderModel> {
            totalIncome: null,
            errorMessage: null,
            isError: false,
-           isLoading: false,
+           isLoading: true,
          ),
        );
 
@@ -82,7 +82,10 @@ class TransactionsViewModel extends StateNotifier<TransactionsProviderModel> {
     double totalIncome;
     double totalExpense;
 
-    state = state.copyWith(isLoading: true);
+    if (!state.isLoading) {
+      state = state.copyWith(isLoading: true);
+    }
+
     _transactionsService
         .getAllTransactions(uid: uid)
         .then((transactions) {

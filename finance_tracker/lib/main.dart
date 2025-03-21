@@ -28,7 +28,10 @@ class MyApp extends ConsumerWidget {
           title: "Finance Tracker",
           debugShowCheckedModeBanner: false,
           theme: ThemeData.light(useMaterial3: true),
-          home: snapshot.data == null ? const AuthScreen() : HomeScreen(),
+          home:
+              snapshot.data == null
+                  ? const AuthScreen()
+                  : HomeScreen(uid: snapshot.data!.uid),
         );
       },
     );

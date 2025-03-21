@@ -3,8 +3,6 @@ import 'package:finance_tracker/services/auth/firebase_auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
-
 StateNotifierProvider<AuthViewModel, AuthProviderModel> authProvider =
     StateNotifierProvider(
       (ref) => AuthViewModel(firebaseAuthService: FirebaseAuthService()),
@@ -26,7 +24,11 @@ class AuthViewModel extends StateNotifier<AuthProviderModel> {
 
   Stream<User?> get authStateChanges => _firebaseAuthService.authState;
 
-  void signUpUser({
+  Future<void> updateCurrentUser(User user) async {
+    state = state.copyWith(user: user);
+  }
+
+  Future<void> signUpUser({
     required String email,
     required String password,
   }) async {
@@ -46,7 +48,7 @@ class AuthViewModel extends StateNotifier<AuthProviderModel> {
     }
   }
 
-  void loginUser({required String email, required String password}) async {
+  Future<void> loginUser({required String email, required String password}) async {
     try {
       state = state.copyWith(isLoading: true);
       final user = await _firebaseAuthService.loginUser(

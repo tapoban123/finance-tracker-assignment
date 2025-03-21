@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+  final String uid;
+  const HomeScreen({super.key, required this.uid});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
@@ -44,7 +45,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: IndexedStack(
         index: ref.watch(homeNavProvider),
-        children: [DashboardScreen(), SettingsScreen()],
+        children: [DashboardScreen(widget.uid), SettingsScreen()],
       ),
     );
   }

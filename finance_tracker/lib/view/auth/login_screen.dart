@@ -24,61 +24,68 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final authProviderObj = ref.watch(authProvider);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Login",
-            style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+    return authProviderObj.isLoading
+        ? Center(child: CircularProgressIndicator())
+        : Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Login",
+                style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 100),
+              AuthTextField(
+                textController: _emailController,
+                hintText: "Email",
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 10),
+              AuthTextField(
+                textController: _passwordController,
+                hintText: "Password",
+                keyboardType: TextInputType.visiblePassword,
+                isPassword: true,
+              ),
+              SizedBox(height: 50),
+              AuthButton(
+                backgroundColor: Colors.blueAccent,
+                buttonText: "Login",
+                onTap: () {
+                  ref
+                      .read(authProvider.notifier)
+                      .loginUser(
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text.trim(),
+                      )
+                      .then((value) {
+                        if (authProviderObj.isLoading && context.mounted) {
+                          showProgressDialog(context);
+                          printInDebug("Loading Auth");
+                        } else if (authProviderObj.isError && context.mounted) {
+                          showSnackBar(
+                            context,
+                            message: authProviderObj.errorMessage!,
+                          );
+                          printInDebug(authProviderObj.errorMessage!);
+                        }
+                      });
+                },
+              ),
+              SizedBox(height: 8),
+              AuthBottomText(
+                question: "Don't have an account? ",
+                solution: "Sign Up now!",
+                onTap: () {
+                  ref.read(authNavProvider.notifier).update((state) => 1);
+                  // Navigator.of(context).pushReplacement(
+                  //   pageRouteAnimation(context, screen: SignUpScreen(), x: 1),
+                  // );
+                },
+              ),
+            ],
           ),
-          SizedBox(height: 100),
-          AuthTextField(
-            textController: _emailController,
-            hintText: "Email",
-            keyboardType: TextInputType.emailAddress,
-          ),
-          SizedBox(height: 10),
-          AuthTextField(
-            textController: _passwordController,
-            hintText: "Password",
-            keyboardType: TextInputType.visiblePassword,
-            isPassword: true,
-          ),
-          SizedBox(height: 50),
-          AuthButton(
-            backgroundColor: Colors.blueAccent,
-            buttonText: "Login",
-            onTap: () {
-              ref
-                  .read(authProvider.notifier)
-                  .loginUser(
-                    email: _emailController.text.trim(),
-                    password: _passwordController.text.trim(),
-                  );
-              if (authProviderObj.isLoading) {
-                showProgressDialog(context);
-                printInDebug("Loading Auth");
-              } else if (authProviderObj.isError) {
-                showSnackBar(context, message: authProviderObj.errorMessage!);
-                printInDebug(authProviderObj.errorMessage!);
-              }
-            },
-          ),
-          SizedBox(height: 8),
-          AuthBottomText(
-            question: "Don't have an account? ",
-            solution: "Sign Up now!",
-            onTap: () {
-              ref.read(authNavProvider.notifier).update((state) => 1);
-              // Navigator.of(context).pushReplacement(
-              //   pageRouteAnimation(context, screen: SignUpScreen(), x: 1),
-              // );
-            },
-          ),
-        ],
-      ),
-    );
+        );
   }
 }

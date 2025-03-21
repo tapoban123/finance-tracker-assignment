@@ -9,7 +9,7 @@ class ManageUsersService {
     await db.doc(user.uid).set(userMap);
   }
 
-  Future<void> deleteUsere({required String uid}) async {
+  Future<void> deleteUser({required String uid}) async {
     await db.doc(uid).delete();
   }
 
